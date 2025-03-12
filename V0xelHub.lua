@@ -16,6 +16,7 @@ local fovRadius = 100
 local flySpeed = 50
 local walkSpeed = 16
 local jumpPower = 50
+local rightClickHeld = false
 
 -- Rayfield UI Window
 local Window = Rayfield:CreateWindow({
@@ -116,6 +117,45 @@ local fovSlider = MainTab:CreateSlider({
         fovRadius = value
     end
 })
+
+-- Aimbot Function
+local function aimAt(target)
+    if target and target:FindFirstChild(targetPart) then
+        Camera.CFrame = CFrame.new(Camera.CFrame.Position, target[targetPart].Position)
+    end
+end
+
+RunService.RenderStepped:Connect(function()
+    if aimbotEnabled and rightClickHeld then
+        local closestTarget = nil
+        local shortestDistance = math.huge
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                local distance = (player.Character.HumanoidRootPart.Position - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+                if distance < shortestDistance and distance <= fovRadius then
+                    closestTarget = player.Character
+                    shortestDistance = distance
+                end
+            end
+        end
+        if closestTarget then
+            aimAt(closestTarget)
+        end
+    end
+end)
+
+-- Detect Right Click Pressed
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 and aimbotEnabled then
+        rightClickHeld = true
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input, gameProcessed)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        rightClickHeld = false
+    end
+end)
 
 -- Fly Function
 local flying = false
