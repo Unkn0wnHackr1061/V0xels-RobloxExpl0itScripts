@@ -23,14 +23,24 @@ local Window = Rayfield:CreateWindow({
     Name = "V0xelHub",
     LoadingTitle = "Loading Features...",
     LoadingSubtitle = "Please wait",
+    Theme = ""
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "V0xelSettings",
         FileName = "config"
     }
+    -- Key
+    KeySystem = true
+    KeySettings = {
+        Title = "Cheese dreamer detected"
+        Subtitle = "Provide a valid key"
+        Note = "Only way to get a key is to get it from V0xel noob >:D"
+        SaveKey = true
+        Key = {"ohminty","fart","pinus","criminality","myheadhurtsfromcoding","v0xelballs"}
+
 })
 
-local MainTab = Window:CreateTab("Main", 4483362458)
+local MainTab = Window:CreateTab("Cheats", "box")
 
 -- ESP Toggle with Callback
 local ESPToggleButton = MainTab:CreateToggle({
