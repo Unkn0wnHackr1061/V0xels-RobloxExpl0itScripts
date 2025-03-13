@@ -32,12 +32,17 @@ local Window = Rayfield:CreateWindow({
 
 local MainTab = Window:CreateTab("Main", 4483362458)
 
--- ESP Toggle
+-- ESP Toggle with Callback
 local ESPToggleButton = MainTab:CreateToggle({
     Name = "Enable ESP",
     Default = ESP_ENABLED,
     Callback = function(state)
         ESP_ENABLED = state
+        if ESP_ENABLED then
+            enableESP()
+        else
+            disableESP()
+        end
     end,
 })
 
@@ -121,7 +126,11 @@ local fovSlider = MainTab:CreateSlider({
 -- Aimbot Function
 local function aimAt(target)
     if target and target:FindFirstChild(targetPart) then
-        Camera.CFrame = CFrame.new(Camera.CFrame.Position, target[targetPart].Position)
+        local targetPosition = target[targetPart].Position
+        local newCFrame = CFrame.new(Camera.CFrame.Position, targetPosition)
+        
+        -- Smoothly move towards the target
+        Camera.CFrame = Camera.CFrame:Lerp(newCFrame, 0.2)
     end
 end
 
@@ -180,3 +189,20 @@ function disableFly()
         bodyVelocity:Destroy()
     end
 end
+
+local function createESP(player)
+    if player == LocalPlayer then return end
+
+    local highlight = Instance.new("Highlight")
+    highlight.Parent = player.Character
+    highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Red highlight for enemies
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- White outline
+end
+
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        if ESP_ENABLED then
+            createESP(player)
+        end
+    end)
+end)
